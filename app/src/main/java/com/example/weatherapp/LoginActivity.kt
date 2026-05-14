@@ -90,7 +90,8 @@ fun LoginPage(modifier: Modifier = Modifier) {
             },
                 enabled = email.isNotEmpty() && password.isNotEmpty()
             ) {
-                Text("Login")
+                Text("Login",
+                    fontSize = 10.sp)
             }
 
             Spacer(modifier = Modifier.size(12.dp))
@@ -103,7 +104,8 @@ fun LoginPage(modifier: Modifier = Modifier) {
                 )
             }
             ) {
-                Text("Registrar")
+                Text("Registrar",
+                    fontSize = 10.sp)
             }
 
             Spacer(modifier = Modifier.size(12.dp))
@@ -111,7 +113,8 @@ fun LoginPage(modifier: Modifier = Modifier) {
             Button(
                 onClick = { email = ""; password = "" }
             ) {
-                Text("Limpar")
+                Text("Limpar",
+                    fontSize = 10.sp)
             }
         }
     }
