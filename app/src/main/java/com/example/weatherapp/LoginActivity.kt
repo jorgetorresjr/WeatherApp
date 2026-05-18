@@ -83,12 +83,14 @@ fun LoginPage(modifier: Modifier = Modifier) {
         )
         Row (horizontalArrangement = Arrangement.Center){
             Button( onClick = {
-                Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
-                activity.startActivity(
-                    Intent(activity, MainActivity::class.java).setFlags(
-                        FLAG_ACTIVITY_SINGLE_TOP
-                    )
-                )
+                Firebase.auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(activity) { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(activity, "Login FALHOU!", Toast.LENGTH_LONG).show()
+                        }
+                    }
             },
                 enabled = email.isNotEmpty() && password.isNotEmpty()
             ) {
@@ -99,19 +101,11 @@ fun LoginPage(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.size(12.dp))
 
             Button( onClick = {
-                Firebase.auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(activity) { task ->
-                        if (task.isSuccessful) {
-                            activity.startActivity(
-                                Intent(activity, MainActivity::class.java).setFlags(
-                                    FLAG_ACTIVITY_SINGLE_TOP
-                                )
-                            )
-                            Toast.makeText(activity, "Login OK!", Toast.LENGTH_LONG).show()
-                        } else {
-                            Toast.makeText(activity, "Login FALHOU!", Toast.LENGTH_LONG).show()
-                        }
-                    }
+                activity.startActivity(
+                    Intent(activity, RegisterActivity::class.java).setFlags(
+                        FLAG_ACTIVITY_SINGLE_TOP
+                    )
+                )
             }
             ) {
                 Text("Registrar",
