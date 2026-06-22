@@ -7,12 +7,14 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.api.WeatherService
+import com.example.weatherapp.api.toForecast
 import com.example.weatherapp.api.toWeather
 import com.example.weatherapp.db.fb.FBCity
 import com.example.weatherapp.db.fb.FBDatabase
 import com.example.weatherapp.db.fb.FBUser
 import com.example.weatherapp.db.fb.toFBCity
 import com.example.weatherapp.model.City
+import com.example.weatherapp.model.Forecast
 import com.example.weatherapp.model.User
 import com.example.weatherapp.model.Weather
 import com.google.android.gms.maps.model.LatLng
@@ -24,6 +26,11 @@ class MainViewModel (private val db: FBDatabase,
     val cities : List<City>
         get() = _cities.values.toList().sortedBy { it.name }
     private val _weather = mutableStateMapOf<String, Weather>()
+    private val _forecast = mutableStateMapOf<String, List<Forecast>?>()
+    private var _city = mutableStateOf<String?>(null)
+    var city: String?
+        get() = _city.value
+        set(tmp) { _city.value = tmp }
 
     private val _user = mutableStateOf<User?> (null)
     val user : User?
@@ -90,11 +97,24 @@ class MainViewModel (private val db: FBDatabase,
     }
 
 
+    fun forecast (name: String) = _forecast.getOrPut(name) {
+        loadForecast(name)
+        emptyList() // return
+    }
+
+    private fun loadForecast(name: String) {
+        service.getForecast(name) { apiForecast ->
+            apiForecast?.let {
+                _forecast[name] = apiForecast.toForecast()
+            }
+        }
+    }
 }
 
 fun getCities() = List(20) { i ->
     City(name = "Cidade $i")
 }
+
 
 class MainViewModelFactory(
     private val db : FBDatabase,
