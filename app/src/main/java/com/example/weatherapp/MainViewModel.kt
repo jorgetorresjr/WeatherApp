@@ -74,6 +74,10 @@ class MainViewModel (private val db: FBDatabase,
         }
     }
 
+    fun update(city: City) {
+        db.update(city.toFBCity())
+    }
+
     override fun onUserLoaded(user: FBUser) {
         _user.value = user.toUser()
     }
