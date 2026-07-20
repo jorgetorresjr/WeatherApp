@@ -137,9 +137,11 @@ fun ForecastItem(
             Row {
                 Text(modifier = modifier, text = forecast.date, fontSize = 20.sp)
                 Spacer(modifier = modifier.size(12.dp))
-                Text(modifier = modifier, text = "Min: $tempMin℃", fontSize = 16.sp)
-                Spacer(modifier = modifier.size(12.dp))
-                Text(modifier = modifier, text = "Max: $tempMax℃", fontSize = 16.sp)
+
+                Column {
+                    Text(modifier = modifier, text = "Min: $tempMin℃", fontSize = 16.sp)
+                    Text(modifier = modifier, text = "Max: $tempMax℃", fontSize = 16.sp)
+                }
             }
         }
     }
