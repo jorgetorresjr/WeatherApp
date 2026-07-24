@@ -7,15 +7,12 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20"
     id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     alias(libs.plugins.google.gms.google.services)
+    id("com.google.devtools.ksp") version "2.3.4"
 }
 
 android {
     namespace = "com.example.weatherapp"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.weatherapp"
@@ -44,9 +41,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.3"
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -54,13 +55,18 @@ android {
 }
 
 dependencies {
+    val room_version = "2.8.4"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+
     // Google maps
     implementation("com.google.android.gms:play-services-maps:20.0.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     // Google maps for compose
     implementation("com.google.maps.android:maps-compose:8.3.0")
 
-    implementation ("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation ("com.squareup.:retrofit:3.0.0")
     implementation ("com.squareup.retrofit2:converter-gson:3.0.0")
 
     implementation("io.coil-kt:coil-compose:2.7.0") // coil
