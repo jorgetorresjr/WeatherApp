@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.util.Consumer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -62,6 +63,8 @@ class MainActivity : ComponentActivity() {
             val viewModel : MainViewModel = viewModel(
                 factory = MainViewModelFactory(repository, weatherService, forecastMonitor)
             )
+            val user = viewModel.user.collectAsStateWithLifecycle(null).value
+
 
             DisposableEffect(Unit) {
                 val listener = Consumer<Intent> { intent ->
@@ -93,7 +96,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = {
-                                val name = viewModel.user?.name?:"[carregando...]"
+                                val name = user?.name?:"[carregando...]"
                                 Text("Bem-vindo/a! $name")
                             },
                             actions = {

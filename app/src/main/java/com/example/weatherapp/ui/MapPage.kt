@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.model.Weather
@@ -68,16 +70,26 @@ public fun MapPage (modifier: Modifier = Modifier,
         properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
         uiSettings = MapUiSettings(myLocationButtonEnabled = true)
     ) {
-            viewModel.cities.forEach {
-                if (it.location != null) {
-                    val weather = viewModel.weather(it.name)
-                    val image = weather.bitmap ?:
-                    getDrawable(context, R.drawable.loading)!!.toBitmap()
+        val cities = viewModel.cities.collectAsStateWithLifecycle(emptyMap()).value
+        val weatherMap = viewModel.weather
+            .collectAsStateWithLifecycle(emptyMap()).value
+        cities.values.forEach {
+            if (it.location != null) {
+                val weather = weatherMap[it.name]?:Weather.LOADING
+                LaunchedEffect(it.name) {
+                    viewModel.loadWeather(it.name)
+                }
+                LaunchedEffect(weather) {
+                    viewModel.loadBitmap(it.name)
+                }
+                    val image =
+                        weather.bitmap ?: getDrawable(context, R.drawable.loading)!!.toBitmap()
                     val marker = BitmapDescriptorFactory
-                        .fromBitmap(image.scale(120,120))
+                        .fromBitmap(image.scale(120, 120))
                     val desc = if (weather == Weather.LOADING) "Carregando clima..."
                     else weather.desc
-                    Marker( state = MarkerState(position = it.location),
+                    Marker(
+                        state = MarkerState(position = it.location),
                         icon = marker,
                         title = it.name, snippet = desc
                     )
